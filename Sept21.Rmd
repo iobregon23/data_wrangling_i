@@ -1,0 +1,107 @@
+---
+title: "Data Manipulation"
+output: github_document
+---
+```{r}
+library(tidyverse)
+library(readxl)
+library(haven)
+```
+
+```{r}
+options(tibble.print_min = 3)
+
+litters_data = read_csv("./data/FAS_litters.csv",
+  col_types = "ccddiiii")
+litters_data = janitor::clean_names(litters_data)
+
+pups_data = read_csv("./data/FAS_pups.csv",
+  col_types = "ciiiii")
+pups_data = janitor::clean_names(pups_data)
+```
+
+# select 
+
+'selct' is used to select columns 
+
+```{r}
+select(litters_data, group, litter_number, gd0_weight, pups_born_alive)
+
+select(litters_data, gd0_weight, group)
+
+select(litters_data, group, starts_with("pups"))
+```
+Subtracting pup_survive
+```{r}
+select(litters_data, -pups_survive)
+```
+
+Renaming 
+```{r}
+select(litters_data, group, litters_id = litter_number)
+
+select(litters_data, group, litters_id = litter_number, everything())
+
+select(litters_data, gd0_weight, everything())
+```
+
+or 
+
+```{r}
+rename(litters_data, litter_id = litter_number)
+
+relocate(litters_data, litter_number)
+```
+
+'select' vs 'pull' 
+
+```{r}
+select(litters_data, group)
+pull(litters_data, group)
+```
+
+Learning Assessment - litter number, sex, and pd ears 
+
+
+
+## filter 
+get rid of rows using 'filter()'
+
+```{r}
+filter(litters_data, group == "Con7")
+
+filter(litters_data, group != "Con7")
+
+filter(litters_data, gd0_weight > 20)
+
+filter(litters_data, gd0_weight <= 20)
+
+filter(litters_data, group == "Con7" | group == "Con8")
+
+filter(litters_data, group %in% c("?Con7", "Con8"))
+
+filter(litters_data, !(group == "Con7"))
+
+filter(litters_data, group %in% c("Con7", "Con8"), gd0_weight > 20)
+```
+
+what about missing rows
+
+```{r}
+drop_na(litters_data)
+drop_na(litters_data, gd0_weight)
+```
+
+## 'mutate' 
+this is used to 
+```{r}
+mutate(litters_data, wt_gain = gd18_weight - gd0_weight)
+
+mutate(litters_data, group = str_to_lower(group))
+
+mutate(
+  litters_data, 
+  wt-gain = gd18_weight - gd0_weight, 
+  group= str_to_lower(group)
+)
+```
